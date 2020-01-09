@@ -1,14 +1,15 @@
 Welcome to EVTech's documentation!
 ======================================
 
+.. include:: ../README.rst
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
-   readme
    installation
    usage
-   modules
+   api
    contributing
    authors
    history
