@@ -2,7 +2,6 @@
 EVTech
 ======
 
-
 .. image:: https://img.shields.io/pypi/v/evtech.svg
         :target: https://pypi.python.org/pypi/evtech
 
@@ -20,7 +19,6 @@ EVTech
 .. image:: https://pyup.io/repos/github/dnilosek/evtech/python-3-shield.svg
      :target: https://pyup.io/repos/github/dnilosek/evtech/
      :alt: Python 3
-
 
 Simple tools for working with data provided by Eagleview for the RIT Hack.tiff 2020 Hackathon
 
