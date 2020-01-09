@@ -13,7 +13,13 @@ EVTech
         :target: https://evtech.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
+.. image:: https://pyup.io/repos/github/dnilosek/evtech/shield.svg
+     :target: https://pyup.io/repos/github/dnilosek/evtech/
+     :alt: Updates
 
+.. image:: https://pyup.io/repos/github/dnilosek/evtech/python-3-shield.svg
+     :target: https://pyup.io/repos/github/dnilosek/evtech/
+     :alt: Python 3
 
 
 Simple tools for working with data provided by Eagleview for the RIT Hack.tiff 2020 Hackathon
