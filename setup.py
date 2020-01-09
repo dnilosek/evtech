@@ -31,7 +31,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
     ],
-    description="Python Boilerplate contains all the boilerplate you need to create a Python package.",
+    description="Tools for RIT Hack.tiff 2020 Hackathon",
     install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
@@ -43,6 +43,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/dnilosek/evtech',
-    version='0.2.1',
+    version='0.1.0',
     zip_safe=False,
 )
