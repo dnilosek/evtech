@@ -154,9 +154,8 @@ texinfo_documents = [
      'EVTech Documentation',
      author,
      'evtech',
-     'One line description of project.',
-     'Miscellaneous'),
+     'Tools for reading Hack.tiff 2020 Hackathon data',
+     'Hackathon'),
 ]
 
 html_theme = 'sphinx_rtd_theme'
-
