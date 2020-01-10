@@ -9,7 +9,7 @@ EVTech
         :target: https://travis-ci.org/dnilosek/evtech
 
 .. image:: https://coveralls.io/repos/github/dnilosek/evtech/badge.svg?branch=feature/add-import
-:target: https://coveralls.io/github/dnilosek/evtech?branch=feature/add-import
+        :target: https://coveralls.io/github/dnilosek/evtech?branch=feature/add-import
 
 .. image:: https://readthedocs.org/projects/evtech/badge/?version=latest
         :target: https://evtech.readthedocs.io/en/latest/?badge=latest
