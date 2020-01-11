@@ -3,7 +3,7 @@
 import numpy as np
 import utm
 
-from pyproj import CRS
+from pyproj import CRS, Transformer
 
 from .geodesy import utm_crs_from_latlon
 
@@ -34,6 +34,33 @@ class Camera():
         self.elevation = elev
         self.crs = crs
 
+    def project_to_camera(self, lon, lat, elevation):
+        """ Project a lat/lon/elevation point into the image
+        
+        :param lat: The latitiude
+        :type lat: float
+        :param lon: The longitiude
+        :type lon: float
+        :param elevation: The elevation
+        :type elevation: float
+        :return: The row, col value of the pixel
+        :rtype: class: `np.Array`
+        """
+
+        # Convert lat/lon/elev to camera CRS
+        transformer = Transformer.from_crs(CRS.from_user_input(4326),self.crs, always_xy=True)
+        x,y,z = transformer.transform(lon, lat, elevation)
+        pt = np.transpose(np.array([[x,y,z,1.0]]))
+
+        # Do projection
+        img_pt_h = self.projection_matrix @ pt
+        img_pt = img_pt_h / img_pt_h[2]
+
+        # Offset pixel by bounds
+        img_pt[0] -= self.image_bounds[0]
+        img_pt[1] -= self.image_bounds[1]
+        img_pt = np.transpose(img_pt)
+        return img_pt[0][0:2]
 
 def camera_from_json(json_data):
     """ Generate a camera from the seralized JSON data

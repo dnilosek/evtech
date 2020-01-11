@@ -11,7 +11,7 @@ from evtech import Camera
 from evtech import camera_from_json
 
 class TestCamera(unittest.TestCase):
-    """Tests for `evtech` package."""
+    """Tests for `evtech.camera` package."""
 
     def setUp(self):
         """Set up test fixtures, if any."""
@@ -34,6 +34,13 @@ class TestCamera(unittest.TestCase):
     def test_construct(self):
         """Test something."""
         cam = Camera(self.proj, self.bounds, self.cen, self.geo_bounds, self.elev, self.crs)
+
+    def test_project_to_camera(self):
+        cam = Camera(self.proj, self.bounds, self.cen, self.geo_bounds, self.elev, self.crs)
+        # Top left corner from geo bounds, should be within the 0,0 pixel
+        pt = cam.project_to_camera(self.geo_bounds[2], self.geo_bounds[1], self.elev)
+        self.assertTrue(pt[0] >= 0 and pt[0] < 1)
+        self.assertTrue(pt[1] >= 0 and pt[1] < 1)
 
     def test_fromjson(self):
         data = {
