@@ -10,3 +10,5 @@ def load_dataset(dir_path):
     nadir_path = Path(dir_path).joinpath("nadirs")
     oblique_path = Path(dir_path).joinpath("obliques")
 
+    print(nadir_path, oblique_path)
+
