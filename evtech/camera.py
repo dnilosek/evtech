@@ -22,9 +22,11 @@ class Camera():
     :type elev: float
     :param crs: The coordinate system for the projection matrix
     :type crs: class: `pyproj.CRS`
+    :param image_path: The filepath to the image data
+    :type path: str
     """
 
-    def __init__(self, proj, bounds, cen, geo_bounds, elev, crs):
+    def __init__(self, proj, bounds, cen, geo_bounds, elev, crs, image_path):
         """ Constructor method
         """
         self.projection_matrix = proj
@@ -33,6 +35,15 @@ class Camera():
         self.geo_bounds = geo_bounds
         self.elevation = elev
         self.crs = crs
+        self.image_path = image_path
+
+    def set_path(self, image_path):
+        """ Mutator to set path data member
+        
+        :param path: Path to image data
+        :type path: string
+        """
+        self.image_path = image_path
 
     def project_to_camera(self, lon, lat, elevation):
         """ Project a lat/lon/elevation point into the image
@@ -62,11 +73,13 @@ class Camera():
         img_pt = np.transpose(img_pt)
         return img_pt[0][0:2]
 
-def camera_from_json(json_data):
+def camera_from_json(json_data, image_path = ""):
     """ Generate a camera from the seralized JSON data
     
     :param json_data: The json data loaded from the serlized JSON
     :type json_data: dict
+    :param image_path: The path to the associated image data
+    :type image_path: str, optional
     :return: A camera object
     :rtype: classs
     """
@@ -76,4 +89,4 @@ def camera_from_json(json_data):
 
     return Camera(np.array(json_data["projection"]), json_data["bounds"], 
                     json_data["camera_center"],json_data["geo_bounds"], 
-                    json_data["elevation"], crs)
+                    json_data["elevation"], crs, image_path)

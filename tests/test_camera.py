@@ -25,22 +25,22 @@ class TestCamera(unittest.TestCase):
         self.geo_bounds = [-105.12153711031904, 39.75137947368138, -105.1212480998424, 39.751532181111685]
         self.elev = 1717.2020042918448
         self.crs = CRS.from_user_input(32613)
+        self.path = "foo.jpg"
+        self.cam = Camera(self.proj, self.bounds, self.cen, self.geo_bounds, self.elev, self.crs, self.path)
         pass
-
-    def tearDown(self):
-        """Tear down test fixtures, if any."""
-        pass
-
-    def test_construct(self):
-        """Test something."""
-        cam = Camera(self.proj, self.bounds, self.cen, self.geo_bounds, self.elev, self.crs)
 
     def test_project_to_camera(self):
-        cam = Camera(self.proj, self.bounds, self.cen, self.geo_bounds, self.elev, self.crs)
         # Top left corner from geo bounds, should be within the 0,0 pixel
-        pt = cam.project_to_camera(self.geo_bounds[2], self.geo_bounds[1], self.elev)
+        pt = self.cam.project_to_camera(self.geo_bounds[2], self.geo_bounds[1], self.elev)
         self.assertTrue(pt[0] >= 0 and pt[0] < 1)
         self.assertTrue(pt[1] >= 0 and pt[1] < 1)
+
+        # Bottom right should fall in last pixel idex
+        x_idx = self.bounds[2] - self.bounds[0]
+        y_idx = self.bounds[3] - self.bounds[1]
+        pt = self.cam.project_to_camera(self.geo_bounds[0], self.geo_bounds[3], self.elev)
+        self.assertTrue(pt[0] >= x_idx and pt[0] < x_idx+1)
+        self.assertTrue(pt[1] >= y_idx and pt[1] < y_idx+1)
 
     def test_fromjson(self):
         data = {
@@ -56,4 +56,5 @@ class TestCamera(unittest.TestCase):
         }
 
         cam = camera_from_json(data)
+        # Ensure conversion done correctly
         self.assertEqual(str(cam.crs),"epsg:32613")
