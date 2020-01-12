@@ -2,6 +2,7 @@
 
 from .camera import *
 from .geodesy import *
+from .dataset import *
 
 __author__ = """David Nilosek"""
 __email__ = 'david.nilosek@eagleview.com'
