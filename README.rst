@@ -28,3 +28,13 @@ Simple tools for working with data provided by Eagleview for the RIT Hack.tiff 2
 
 * Free software: MIT license
 * Documentation: https://evtech.readthedocs.io.
+
+====
+TODO
+====
+
+* Add ray from camera
+* Add triangulation
+* Add height from elevation
+* Add intersection with ray and elevation
+* Update usage docs

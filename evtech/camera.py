@@ -82,7 +82,7 @@ class Camera():
         :return: image data
         :rtype: numpy.array
         """
-        return loader(self.image_path)
+        return loader(str(self.image_path))
 
 def camera_from_json(json_data, image_path = ""):
     """ Generate a camera from the seralized JSON data
