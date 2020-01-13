@@ -26,16 +26,10 @@ class TestDataset(unittest.TestCase):
         self.obliques.mkdir(parents=True, exist_ok=True)
 
         # Make fake data
-        self.nadirs.joinpath("0.jpg").touch()
-        self.nadirs.joinpath("0.json").touch()
-        self.nadirs.joinpath("1.jpg").touch()
-        self.nadirs.joinpath("1.json").touch()
-        self.obliques.joinpath("0.jpg").touch()
-        self.obliques.joinpath("0.json").touch()
-        self.obliques.joinpath("1.jpg").touch()
-        self.obliques.joinpath("1.json").touch()
-        self.obliques.joinpath("2.jpg").touch()
-        self.obliques.joinpath("2.json").touch()
+        self.nadirs.joinpath("test.jpg").touch()
+        self.nadirs.joinpath("test.json").write_text("{}")
+        self.obliques.joinpath("test.jpg").touch()
+        self.obliques.joinpath("test.json").write_text("{}")
         pass
 
     def tearDown(self):
@@ -44,4 +38,10 @@ class TestDataset(unittest.TestCase):
 
     def test_load_dataset(self):
 
-        load_dataset(self.tmp, mock_loader)
+        nadirs, obliques = load_dataset(self.tmp, mock_loader)
+        
+        self.assertEqual(1,len(nadirs))
+        self.assertEqual(1,len(obliques))
+
+        self.assertEqual(self.nadirs.joinpath("test.jpg"), nadirs[0].image_path)
+        self.assertEqual(self.obliques.joinpath("test.jpg"), obliques[0].image_path)

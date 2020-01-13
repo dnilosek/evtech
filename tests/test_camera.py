@@ -58,3 +58,9 @@ class TestCamera(unittest.TestCase):
         cam = camera_from_json(data)
         # Ensure conversion done correctly
         self.assertEqual(str(cam.crs),"epsg:32613")
+
+    def test_loadimage(self):
+
+        def loader(img):
+            return self.path == img
+        self.assertTrue(self.cam.load_image(loader))

@@ -2,6 +2,7 @@
 
 import numpy as np
 import utm
+import cv2
 
 from pyproj import CRS, Transformer
 
@@ -72,6 +73,16 @@ class Camera():
         img_pt[1] -= self.image_bounds[1]
         img_pt = np.transpose(img_pt)
         return img_pt[0][0:2]
+    
+    def load_image(self, loader=cv2.imread):
+        """ Load the image for this camera
+        
+        :param loader: A function to load the image, defaults to cv2.imread
+        :type loader: function, optional
+        :return: image data
+        :rtype: numpy.array
+        """
+        return loader(self.image_path)
 
 def camera_from_json(json_data, image_path = ""):
     """ Generate a camera from the seralized JSON data
