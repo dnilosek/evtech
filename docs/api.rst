@@ -6,5 +6,6 @@ API
    :maxdepth: 2
 
    api/camera
+   api/geodesy
 
 

@@ -12,7 +12,7 @@ To install EVTech, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install evtech
+    $ pip3 install evtech
 
 This is the preferred method to install EVTech, as it will always install the most recent stable release.
 
