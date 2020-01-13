@@ -28,6 +28,11 @@ class TestCamera(unittest.TestCase):
         self.path = "foo.jpg"
         self.cam = Camera(self.proj, self.bounds, self.cen, self.geo_bounds, self.elev, self.crs, self.path)
         pass
+    
+    def test_set_imagepath(self):
+        newpath = "bar.jpg"
+        self.cam.set_path(newpath)
+        self.assertEqual(newpath, self.cam.image_path)
 
     def test_project_to_camera(self):
         # Top left corner from geo bounds, should be within the 0,0 pixel
