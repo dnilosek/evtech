@@ -2,6 +2,11 @@
 History
 =======
 
+0.5.0 (2020-01-19)
+------------------
+* Added ray class
+* Added project from camera to camera class
+
 0.4.0 (2020-01-13)
 ------------------
 
