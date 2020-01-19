@@ -21,7 +21,7 @@ class TestCamera(unittest.TestCase):
 		    [-0.05013907005013629, -0.03348284191759311, -0.9981808350981529, 174400.24754747818]
 	    ])
         self.bounds = [3294, 949, 3656, 1195]
-        self.cen = [489652.8811968585, 4400284.38696494, 2520.0653300965037]
+        self.cen = [489652.8811968585, 4400284.38696494, 2520.0653300965037, 1.0]
         self.geo_bounds = [-105.12153711031904, 39.75137947368138, -105.1212480998424, 39.751532181111685]
         self.elev = 1717.2020042918448
         self.crs = CRS.from_user_input(32613)
@@ -46,6 +46,13 @@ class TestCamera(unittest.TestCase):
         pt = self.cam.project_to_camera(self.geo_bounds[0], self.geo_bounds[3], self.elev)
         self.assertTrue(pt[0] >= x_idx and pt[0] < x_idx+1)
         self.assertTrue(pt[1] >= y_idx and pt[1] < y_idx+1)
+
+    def test_project_from_camera(self):
+
+        ray = self.cam.project_from_camera(0,0)
+        self.assertEqual(ray.origin[0], self.cen[0])
+        self.assertEqual(ray.origin[1], self.cen[1])
+        self.assertEqual(ray.origin[2], self.cen[2])
 
     def test_fromjson(self):
         data = {

@@ -7,6 +7,5 @@ API
 
    api/dataset
    api/camera
+   api/ray
    api/geodesy
-
-
