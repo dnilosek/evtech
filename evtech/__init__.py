@@ -7,4 +7,4 @@ from .ray import *
 
 __author__ = """David Nilosek"""
 __email__ = 'david.nilosek@eagleview.com'
-__version__ = '0.4.0'
+__version__ = '0.5.0'
