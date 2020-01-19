@@ -7,6 +7,7 @@ import cv2
 from pyproj import CRS, Transformer
 
 from .geodesy import utm_crs_from_latlon
+from .ray import Ray
 
 class Camera():
     """This class represents camera information for a given image and allows for world<->camera interactions
@@ -45,6 +46,29 @@ class Camera():
         :type path: string
         """
         self.image_path = image_path
+
+    def project_from_camera(self, col, row):
+        """ Project a ray from the camera
+
+        :param col: The column index of the pixel to project
+        :type col: float
+        :param row: The row index of the pixel to project
+        :type row: float
+
+        :return: A ray from the camera
+        :rtype: class: `evtech.Ray`
+        """
+
+        # subset the projection matrix
+        m = self.projection_matrix[0:3,0:3]
+
+        # Get point and project to to normalized plane
+        pt = np.transpose(np.array([[col,row,1.0]]))
+        norm_pt = np.linalg.inv(m) @ pt
+
+        # Create ray
+        [vec_norm_pt] = np.transpose(norm_pt).tolist()
+        return Ray(self.image_center[0:3], vec_norm_pt, self.crs)
 
     def project_to_camera(self, lon, lat, elevation):
         """ Project a lat/lon/elevation point into the image
