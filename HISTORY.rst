@@ -2,6 +2,12 @@
 History
 =======
 
+0.7.0 (2020-01-20)
+------------------
+* Added triangulation function
+* Updated usage docs
+* Fixed bug in project from camera
+
 0.6.0 (2020-01-20)
 ------------------
 * Added height from two points to camera class
