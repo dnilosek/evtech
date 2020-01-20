@@ -132,7 +132,6 @@ class Camera():
 
         # Get depth at midpoint between points
         depth_mid = depth*c
-        print(depth, depth_mid)
 
         # Extract focal length from proj matrix
         camera_matrix,_,_,_,_,_,_ = cv2.decomposeProjectionMatrix(self.projection_matrix)
