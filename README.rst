@@ -33,8 +33,6 @@ Simple tools for working with data provided by Eagleview for the RIT Hack.tiff 2
 TODO
 ====
 
-* Add bounds and elevation extraction
-* Update usage docs
 * Create example
 
 .. include:: ./HISTORY.rst

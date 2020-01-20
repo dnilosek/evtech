@@ -7,6 +7,7 @@ import math
 import scipy.optimize as optimize
 
 from pyproj import CRS, Transformer
+from shapely.geometry import Polygon, box
 
 from .geodesy import utm_crs_from_latlon
 from .ray import Ray
@@ -48,6 +49,15 @@ class Camera():
         :type path: string
         """
         self.image_path = image_path
+
+    def get_bounds(self):
+        """ Get the bounds of the camera
+        :return: The bounds of the image on the ground
+        :rtype: class: `shapely.Polygon`
+        """
+        bounds = box(minx = self.geo_bounds[0], miny=self.geo_bounds[1], 
+                    maxx = self.geo_bounds[2], maxy=self.geo_bounds[3])
+        return(Polygon(bounds))
 
     def project_from_camera(self, col, row):
         """ Project a ray from the camera
