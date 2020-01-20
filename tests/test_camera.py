@@ -106,8 +106,6 @@ class TestCamera(unittest.TestCase):
         height = cam1.height_between_points(base_pt, peak_pt, cam1.elevation)
         self.assertAlmostEqual(height, 5.478992222195782)
 
-
-
     def test_triangualte(self):
         cam1_json = {
             "id": "13470217", 

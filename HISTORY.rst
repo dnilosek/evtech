@@ -2,6 +2,11 @@
 History
 =======
 
+0.6.0 (2020-01-20)
+------------------
+* Added height from two points to camera class
+* Added ray interesection with elevation
+
 0.5.0 (2020-01-19)
 ------------------
 * Added ray class
