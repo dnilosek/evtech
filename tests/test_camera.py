@@ -9,6 +9,7 @@ import numpy as np
 from pyproj import CRS
 from evtech import Camera
 from evtech import camera_from_json
+#from evtech import triangulate_point_from_cameras
 
 class TestCamera(unittest.TestCase):
     """Tests for `evtech.camera` package."""
@@ -48,11 +49,15 @@ class TestCamera(unittest.TestCase):
         self.assertTrue(pt[1] >= y_idx and pt[1] < y_idx+1)
 
     def test_project_from_camera(self):
-
         ray = self.cam.project_from_camera(0,0)
         self.assertEqual(ray.origin[0], self.cen[0])
         self.assertEqual(ray.origin[1], self.cen[1])
         self.assertEqual(ray.origin[2], self.cen[2])
+
+    def test_to_full_image(self):
+        x, y = self.cam.to_full_image(0,0)
+        self.assertEqual(x, self.bounds[0])
+        self.assertEqual(y, self.bounds[1])
 
     def test_fromjson(self):
         data = {
@@ -76,3 +81,77 @@ class TestCamera(unittest.TestCase):
         def loader(img):
             return self.path == img
         self.assertTrue(self.cam.load_image(loader))
+
+    def test_hightbetweenpoints(self):
+        cam1_json = {
+            "id": "13470217", 
+            "shot_id": "13470217_E_ILZLAK020024NeighObliq7313E_150610.jpg", 
+            "warehouse_id": 26946, 
+            "projection": [[1525.5867281279347, -15512.91424561646, -2311.8378111550846, 72183965325.08594], 
+            [-7573.84425712711, 803.6272922226443, -13570.519962708786, -650749980.3668021], 
+            [0.7925646349229568, -0.045523902505363464, -0.608173942069206, -109441.04682805175]], 
+            "bounds": [125, 267, 966, 550], 
+            "camera_center": [408968.8416940464, 4693116.473847266, 1716.97110001749], 
+            "geo_bounds": [-88.07612165733431, 42.38789365082783, -88.07494134030249, 42.389211554600976], 
+            "elevation": 254.16879272460938, 
+            "orientation": "E"
+        }
+        cam1 = camera_from_json(cam1_json)
+        base_pt = [41,118]
+        peak_pt = [35,90]
+
+        height = cam1.height_between_points(base_pt, peak_pt, cam1.elevation)
+        self.assertAlmostEqual(height, 5.51879092088098)
+
+    # def test_triangualte(self):
+    #     cam1_json = {
+    #         "id": "13470217", 
+    #         "shot_id": "13470217_E_ILZLAK020024NeighObliq7313E_150610.jpg", 
+    #         "warehouse_id": 26946, 
+    #         "projection": [[1525.5867281279347, -15512.91424561646, -2311.8378111550846, 72183965325.08594], 
+    #         [-7573.84425712711, 803.6272922226443, -13570.519962708786, -650749980.3668021], 
+    #         [0.7925646349229568, -0.045523902505363464, -0.608173942069206, -109441.04682805175]], 
+    #         "bounds": [125, 267, 966, 550], 
+    #         "camera_center": [408968.8416940464, 4693116.473847266, 1716.97110001749], 
+    #         "geo_bounds": [-88.07612165733431, 42.38789365082783, -88.07494134030249, 42.389211554600976], 
+    #         "elevation": 254.16879272460938, 
+    #         "orientation": "E"
+    #     }
+
+    #     cam2_json = {
+    #             "id": "13470217", 
+    #             "shot_id": "13470217_N_ILZLAK020024NeighObliq4265N_150610.jpg", 
+    #             "warehouse_id": 26946,
+    #             "projection": [[15116.757193147516, 3196.5054851458067, -2909.892827161719, -21213711732.266273], 
+    #             [-333.16135284503827, -8152.243893734243, -13224.287669937909, 38408498248.73735], 
+    #             [-0.06777729452508616, 0.7652991191741246, -0.6401701362908264, -3561739.5617974782]], 
+    #             "bounds": [3569, 2298, 4299, 3029], 
+    #             "camera_center": [411524.2286809936, 4691886.086275864, 1663.19605194418], 
+    #             "geo_bounds": [-88.07612165733431, 42.38789365082783, -88.07494134030249, 42.389211554600976], 
+    #             "elevation": 254.16879272460938, 
+    #             "orientation": "N"
+    #         }
+
+    #     cam3_json = {
+    #         "id": "13470217", 
+    #         "warehouse_id": "26946", 
+    #         "projection": [[-234.48497951320869, -11689.146112537686, -3420.9549093694854, 54967162069.77626], 
+    #         [-11527.74509904331, 527.9966478964207, -3108.9307732776556, 2267432568.205459], 
+    #         [0.07731721986909759, 0.01342309733163904, -0.996916676327768, -93150.24955090503]],
+    #          "bounds": [4405, 655, 5587, 1420], 
+    #          "camera_center": [411228.51669897616, 4693677.177776167, 1653.5802147550032], 
+    #          "geo_bounds": [-88.07607063663191, 42.387928513288855, -88.07499236028416, 42.38917669615173], 
+    #          "elevation": 250.522
+    #     }
+
+    #     cam1 = camera_from_json(cam1_json)
+    #     cam2 = camera_from_json(cam2_json)
+    #     cam3 = camera_from_json(cam3_json)
+    #     pt1 = [605,171]
+    #     pt2 = [304,536]
+    #     pt3 = [879,441]
+    #     cams = [cam1, cam2]
+    #     pts = [pt1, pt2]
+
+    #     world_pt = triangulate_point_from_cameras(cams, pts, True)
+    #     print(world_pt)
