@@ -36,3 +36,5 @@ TODO
 * Add bounds and elevation extraction
 * Update usage docs
 * Create example
+
+.. include:: ./HISTORY.rst
