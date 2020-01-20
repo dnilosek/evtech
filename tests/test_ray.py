@@ -42,6 +42,6 @@ class TestRay(unittest.TestCase):
         self.assertEqual(ray.direction[2],1.0/math.sqrt(3))
 
     def test_elevation_intersect(self):
-        ray = self.cam.project_from_camera(0,0)
+        ray = self.cam.project_from_camera(880,443)
         pt = ray.intersect_at_elevation(self.elev)
         self.assertAlmostEqual(pt[2], self.elev)

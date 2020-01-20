@@ -4,6 +4,7 @@ import numpy as np
 import utm
 import cv2
 import math
+import scipy.optimize as optimize
 
 from pyproj import CRS, Transformer
 
@@ -154,9 +155,9 @@ class Camera():
         :return: The offset row,col
         :rtype: tuple
         """
-        r_col = col + self.image_bounds[1]
-        r_row = row + self.image_bounds[0]
-        return r_row, r_col
+        r_col = col + self.image_bounds[0]
+        r_row = row + self.image_bounds[1]
+        return r_col, r_row
         
     def load_image(self, loader=cv2.imread):
         """ Load the image for this camera
@@ -185,3 +186,57 @@ def camera_from_json(json_data, image_path = ""):
     return Camera(np.array(json_data["projection"]), json_data["bounds"], 
                     json_data["camera_center"],json_data["geo_bounds"], 
                     json_data["elevation"], crs, image_path)
+
+def triangulate_point_from_cameras(cameras, points, to_latlng = False):
+#     """ Triangulates a 3D point from two cameras and two image points
+    
+#     :param camera_1: The first camera
+#     :type camera_1: evtech.Camera
+#     :param point_1: The first image point as a 2 element list [col,row]
+#     :type point_1: list
+#     :param camera_2: The second camera
+#     :type camera_2: evtech.Camera
+#     :param point_2: The second image point as a 2 element list [col,row]
+#     :type point_2: list
+#     :param to_latlng: Flag to return the point as lat/lng/elevation, otherwise will return in the camera's CRS
+#     :type to_latlng: bool
+#     :return: A 3d point
+#     :rtype: numpy.Array
+#     """
+
+    # Get LS initial guess at point 
+    A = []
+    for cam, pt in zip(cameras, points):
+        x,y = cam.to_full_image(float(pt[0]),float(pt[1]))
+        A.append(x * cam.projection_matrix[2,:] - cam.projection_matrix[0,:])
+        A.append(y * cam.projection_matrix[2,:] - cam.projection_matrix[1,:])
+
+    # Solve for X
+    u,d,vt=np.linalg.svd(A)
+    X = vt[-1,0:3]/vt[-1,3] # normalize
+
+    # Optimize by minmizing the reprojection error
+    def f(world_pt):
+        res_sum = 0
+        world_pt_h = np.append(world_pt, [1.0])
+        for cam, pt in zip(cameras, points):
+            proj = cam.projection_matrix @ world_pt_h
+            proj = proj / proj[2]
+            x,y = cam.to_full_image(float(pt[0]),float(pt[1]))
+            res_x = abs(x - proj[0])
+            res_y = abs(y - proj[1])
+            # For numerical stability
+            res = (res_x*res_x + res_y*res_y)**0.5 * 1000
+            res_sum += res
+        return res_sum
+
+    X0 = np.transpose([X[0], X[1], X[2]])
+    result = optimize.minimize(f, X0, method='nelder-mead')
+    X = result.x
+
+    # Convert if needed
+    if to_latlng:
+        transformer = Transformer.from_crs(cameras[0].crs, CRS.from_user_input(4326), always_xy=True)
+        X[0],X[1],X[2] = transformer.transform(X[0], X[1], X[2])
+
+    return X
