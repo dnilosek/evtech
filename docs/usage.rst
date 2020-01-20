@@ -34,7 +34,19 @@ We have provided a simple single-image height measurement function that uses the
 
 Lastly, we have proivded a function to take multiple cameras and associated image points, and triangulate a three dimensional point::
 
-    # Fill in
+    # Load cameras from dataset
+    cam1 = nadirs[0]
+    cam2 = obliques[1]
+    cam3 = obliques[2]
+    cams = [cam1, cam2, cam3]
+
+    # Points from images associated with cam1, cam2, cam3
+    pt1 = [605,171]
+    pt2 = [304,536]
+    pt3 = [879,441]
+    pts = [pt1, pt2, pt3]
+
+    world_pt = evtech.triangulate_point_from_cameras(cams, pts)
 
 OpenCV has a number of tools that can be used for image manipulation and display, refer to the `imgproc <https://docs.opencv.org/4.2.0/d7/dbd/group__imgproc.html>`_ and `highgui <https://docs.opencv.org/4.2.0/d7/dfc/group__highgui.html>`_ packages. Note that these are c++ bindings, you can find many examples that may be helpful on how to use the OpenCV Python bindings `here <https://docs.opencv.org/4.2.0/d6/d00/tutorial_py_root.html>`_::
 

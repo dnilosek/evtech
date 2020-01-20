@@ -155,9 +155,9 @@ class Camera():
         :return: The offset row,col
         :rtype: tuple
         """
-        r_col = col + self.image_bounds[1]
-        r_row = row + self.image_bounds[0]
-        return r_row, r_col
+        r_col = col + self.image_bounds[0]
+        r_row = row + self.image_bounds[1]
+        return r_col, r_row
         
     def load_image(self, loader=cv2.imread):
         """ Load the image for this camera
@@ -204,38 +204,35 @@ def triangulate_point_from_cameras(cameras, points, to_latlng = False):
 #     :rtype: numpy.Array
 #     """
 
-    
-    # Get initial guess at point
+    # Get LS initial guess at point 
     A = []
     for cam, pt in zip(cameras, points):
-        ray = cam.project_from_camera(float(pt[0]), float(pt[1]))
-        A.append(ray.intersect_at_elevation(cam.elevation, False))
+        x,y = cam.to_full_image(float(pt[0]),float(pt[1]))
+        A.append(x * cam.projection_matrix[2,:] - cam.projection_matrix[0,:])
+        A.append(y * cam.projection_matrix[2,:] - cam.projection_matrix[1,:])
 
-    # Use centroid as best guess
-    #X = np.mean(A, axis=0)
-    X = A[0]
+    # Solve for X
+    u,d,vt=np.linalg.svd(A)
+    X = vt[-1,0:3]/vt[-1,3] # normalize
 
-    # Optimize
-    # def f(world_pt):
-    #     res_sum = 0
-    #     world_pt_h = np.append(world_pt, [1.0])
-    #     for cam, pt in zip(cameras, points):
-    #         proj = cam.projection_matrix @ world_pt_h
-    #         proj = proj / proj[2]
-    #         x,y = cam.to_full_image(float(pt[0]),float(pt[1]))
-    #         res_x = abs(x - proj[0])
-    #         res_y = abs(y - proj[1])
-    #         #print(res_x,res_y)
-    #         res = (res_x*res_x + res_y*res_y)**0.5 * 10
-    #         res_sum += res
-    #     #print(res_sum)
-    #     return res_sum
+    # Optimize by minmizing the reprojection error
+    def f(world_pt):
+        res_sum = 0
+        world_pt_h = np.append(world_pt, [1.0])
+        for cam, pt in zip(cameras, points):
+            proj = cam.projection_matrix @ world_pt_h
+            proj = proj / proj[2]
+            x,y = cam.to_full_image(float(pt[0]),float(pt[1]))
+            res_x = abs(x - proj[0])
+            res_y = abs(y - proj[1])
+            # For numerical stability
+            res = (res_x*res_x + res_y*res_y)**0.5 * 1000
+            res_sum += res
+        return res_sum
 
-    # X0 = np.transpose([X[0], X[1], X[2]])
-    # print(X0)
-    # result = optimize.minimize(f, X0, method='BFGS')
-    # print(result)
-    #X = result.x
+    X0 = np.transpose([X[0], X[1], X[2]])
+    result = optimize.minimize(f, X0, method='nelder-mead')
+    X = result.x
 
     # Convert if needed
     if to_latlng:

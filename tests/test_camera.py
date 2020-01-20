@@ -101,10 +101,10 @@ class TestCamera(unittest.TestCase):
         peak_pt = [35,90]
 
         height = cam1.height_between_points(base_pt, peak_pt)
-        self.assertAlmostEqual(height, 5.51879092088098)
+        self.assertAlmostEqual(height, 5.478992222195782)
 
         height = cam1.height_between_points(base_pt, peak_pt, cam1.elevation)
-        self.assertAlmostEqual(height, 5.51879092088098)
+        self.assertAlmostEqual(height, 5.478992222195782)
 
 
 
@@ -152,6 +152,8 @@ class TestCamera(unittest.TestCase):
         cam1 = camera_from_json(cam1_json)
         cam2 = camera_from_json(cam2_json)
         cam3 = camera_from_json(cam3_json)
+        
+        # points should be near the ground
         pt1 = [605,171]
         pt2 = [304,536]
         pt3 = [879,441]
@@ -159,4 +161,4 @@ class TestCamera(unittest.TestCase):
         pts = [pt1, pt2, pt3]
 
         world_pt = triangulate_point_from_cameras(cams, pts, True)
-        print(world_pt)
+        self.assertTrue(abs(cam3.elevation - world_pt[2]) < 5)
