@@ -100,8 +100,13 @@ class TestCamera(unittest.TestCase):
         base_pt = [41,118]
         peak_pt = [35,90]
 
+        height = cam1.height_between_points(base_pt, peak_pt)
+        self.assertAlmostEqual(height, 5.51879092088098
+
         height = cam1.height_between_points(base_pt, peak_pt, cam1.elevation)
         self.assertAlmostEqual(height, 5.51879092088098)
+
+
 
     # def test_triangualte(self):
     #     cam1_json = {
