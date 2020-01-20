@@ -11,6 +11,9 @@ from evtech import Camera
 from evtech import camera_from_json
 from evtech import triangulate_point_from_cameras
 
+from shapely.geometry import mapping
+import json
+
 class TestCamera(unittest.TestCase):
     """Tests for `evtech.camera` package."""
 
@@ -30,6 +33,11 @@ class TestCamera(unittest.TestCase):
         self.cam = Camera(self.proj, self.bounds, self.cen, self.geo_bounds, self.elev, self.crs, self.path)
         pass
     
+    def test_bounds(self):
+        bounds = self.cam.get_bounds()
+        self.assertAlmostEqual(bounds.exterior.coords.xy[0][0],self.geo_bounds[2])
+        self.assertAlmostEqual(bounds.exterior.coords.xy[1][0],self.geo_bounds[1])
+
     def test_set_imagepath(self):
         newpath = "bar.jpg"
         self.cam.set_path(newpath)

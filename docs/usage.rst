@@ -17,12 +17,22 @@ In order to load a dataset (a single collection of images)::
 
 The camera object also stores the average elevation of the image and the geographical bounds of the image, which can be retreived as a Shapely polgon::
 
-    # Fill in
+    # Get average elevation for image
+    elev = nadir_cam.elevation
+
+    # Get bounding polygon
+    bounds = nadir_cam.get_bounds()
+
+    # Create geojson from bounds using shapely, json 
+    from shapely.geometry import mapping
+    import json
+
+    geo_json = json.dumps(mapping(bounds))
 
 From here you can also look at operations with the camera, such as projecting a ray from the camera at a given pixel. Also projecting a latitude, longitude, elevation point into the camera to get the pixel location::
 
     image_pt = nadir_cam.project_to_camera(lon, lat, elevation)
-    ray = nadir_cam.project_from_camera(co, row)
+    ray = nadir_cam.project_from_camera(col, row)
 
 Rays can be used with ground elevation to find the intersection of the pixel and the ground::
 
@@ -50,4 +60,16 @@ Lastly, we have proivded a function to take multiple cameras and associated imag
 
 OpenCV has a number of tools that can be used for image manipulation and display, refer to the `imgproc <https://docs.opencv.org/4.2.0/d7/dbd/group__imgproc.html>`_ and `highgui <https://docs.opencv.org/4.2.0/d7/dfc/group__highgui.html>`_ packages. Note that these are c++ bindings, you can find many examples that may be helpful on how to use the OpenCV Python bindings `here <https://docs.opencv.org/4.2.0/d6/d00/tutorial_py_root.html>`_::
 
-    # Fill in
+    import cv2
+
+    # Get image
+    img = nadir_cam.load_image()
+
+    # Display an image
+    cv2.namedWindow('image', cv2.WINDOW_NORMAL)
+    cv2.imshow('image',img)
+    k = cv2.waitKey(0)
+
+    # wait for ESC key to exit
+    if k == 27:
+        cv2.destroyAllWindows()
