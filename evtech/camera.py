@@ -3,6 +3,7 @@
 import numpy as np
 import utm
 import cv2
+import math
 
 from pyproj import CRS, Transformer
 
@@ -22,7 +23,7 @@ class Camera():
     :type geo_bounds: list
     :param elev: The average elevation of the image
     :type elev: float
-    :param crs: The coordinate system for the projection matrix
+    :param crs: The coordinate system for the projection matrix (Must be linear such as UTM)
     :type crs: class: `pyproj.CRS`
     :param image_path: The filepath to the image data
     :type path: str
@@ -62,6 +63,9 @@ class Camera():
         # subset the projection matrix
         m = self.projection_matrix[0:3,0:3]
 
+        # Offset for crop
+        col, row = self.to_full_image(col,row)
+
         # Get point and project to to normalized plane
         pt = np.transpose(np.array([[col,row,1.0]]))
         norm_pt = np.linalg.inv(m) @ pt
@@ -97,7 +101,63 @@ class Camera():
         img_pt[1] -= self.image_bounds[1]
         img_pt = np.transpose(img_pt)
         return img_pt[0][0:2]
-    
+
+    def height_between_points(self, base_point, peak_point, elev=None):
+        """ Compute the height between two image points, given the elevation of the base point. 
+        If no elevation is passed the stored elevation will be used.
+
+        :param base_point: The image point at the given elevation
+        :type base_point: list
+        :param peak_point: The image point to compute the height at
+        :type peak_point: list
+        :param elev: The associated elevation of the base point, defaults to None
+        :type elev: float, optional
+        """
+        if not elev:
+            elev = self.elevation
+        
+        # Compute rays from each point
+        base_ray = self.project_from_camera(base_point[0],base_point[1])
+        peak_ray = self.project_from_camera(peak_point[0],peak_point[1])
+
+        # Compute the cosine of the angle between the two rays
+        [base_dir] = np.transpose(base_ray.direction)
+        [peak_dir] = np.transpose(peak_ray.direction)
+
+        dt = np.dot(base_dir, peak_dir)
+        c = dt/np.linalg.norm(base_dir)/np.linalg.norm(peak_dir)
+
+        # Compute depth at given elevation
+        depth = base_ray.depth_at_elevation(elev)
+
+        # Get depth at midpoint between points
+        depth_mid = depth*c
+
+        # Extract focal length from proj matrix
+        camera_matrix,_,_,_,_,_,_ = cv2.decomposeProjectionMatrix(self.projection_matrix)
+        focal_x = camera_matrix[0][0]
+        focal_y = camera_matrix[1][1]
+        focal = (focal_x + focal_y) / 2
+
+        # Compute height using simlar triangles
+        dist = np.linalg.norm(np.array(base_point) - np.array(peak_point))
+        height = dist / focal * depth_mid
+        return height[0]
+
+    def to_full_image(self, col, row):
+        """ Convert an image point from the subset image to the full image
+        
+        :param col: The column to offset
+        :type col: float
+        :param row: The row to offset
+        :type row: float
+        :return: The offset row,col
+        :rtype: tuple
+        """
+        r_col = col + self.image_bounds[1]
+        r_row = row + self.image_bounds[0]
+        return r_row, r_col
+        
     def load_image(self, loader=cv2.imread):
         """ Load the image for this camera
         
@@ -116,7 +176,7 @@ def camera_from_json(json_data, image_path = ""):
     :param image_path: The path to the associated image data
     :type image_path: str, optional
     :return: A camera object
-    :rtype: classs
+    :rtype: evtech.Camera
     """
     # Determine proper UTM zone
     crs = utm_crs_from_latlon(json_data["geo_bounds"][1], 
@@ -125,3 +185,47 @@ def camera_from_json(json_data, image_path = ""):
     return Camera(np.array(json_data["projection"]), json_data["bounds"], 
                     json_data["camera_center"],json_data["geo_bounds"], 
                     json_data["elevation"], crs, image_path)
+
+# def triangulate_point_from_cameras(cameras, points, to_latlng = False):
+# #     """ Triangulates a 3D point from two cameras and two image points
+    
+# #     :param camera_1: The first camera
+# #     :type camera_1: evtech.Camera
+# #     :param point_1: The first image point as a 2 element list [col,row]
+# #     :type point_1: list
+# #     :param camera_2: The second camera
+# #     :type camera_2: evtech.Camera
+# #     :param point_2: The second image point as a 2 element list [col,row]
+# #     :type point_2: list
+# #     :param to_latlng: Flag to return the point as lat/lng/elevation, otherwise will return in the camera's CRS
+# #     :type to_latlng: bool
+# #     :return: A 3d point
+# #     :rtype: numpy.Array
+# #     """
+
+    
+#     weights = [1.0 for i in range(len(cameras))]
+#     for i in range(10):
+#         A = []
+#         for cam, pt, weight in zip(cameras, points, weights):
+#             x,y = cam.to_full_image(float(pt[0]),float(pt[1]))
+#             A.append((x * cam.projection_matrix[2,:] - cam.projection_matrix[0,:])/weight)
+#             A.append((y * cam.projection_matrix[2,:] - cam.projection_matrix[1,:])/weight)
+
+#         # Solve for X
+#         u,d,vt=np.linalg.svd(A)
+#         X = vt[-1,0:3]/vt[-1,3] # normalize
+#         wX = np.transpose(np.append(X, [1.0]))
+
+#         # update weights
+#         for idx, (cam, weight) in enumerate(zip(cameras, weights)):
+#             weights[idx] = cam.projection_matrix[2,:] @ wX
+            
+#         print(weights)
+
+#     # Convert if needed
+#     if to_latlng:
+#         transformer = Transformer.from_crs(cameras[0].crs, CRS.from_user_input(4326), always_xy=True)
+#         X[0],X[1],X[2] = transformer.transform(X[0], X[1], X[2])
+
+#     return X
