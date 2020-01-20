@@ -12,19 +12,25 @@ In order to load a dataset (a single collection of images)::
     nadirs, obliques = evtech.load_dataset('/path/to/dataset')
 
     # Get the image data for the first nadir camera as a numpy array
-    img = nadirs[0].load_image()
-
-From where you can also look at operations with the camera, such as projecting a ray from the camera at a given pixel. Also projecting a latitude, longitude, elevation point into the camera to get the pixel location::
-
-    # Fill in 
+    nadir_cam = nadirs[0]
+    img = nadir_cam.load_image()
 
 The camera object also stores the average elevation of the image and the geographical bounds of the image, which can be retreived as a Shapely polgon::
 
     # Fill in
 
-We have provided a simple single-image height measurement function that uses the camera and two points to compute the height of an object::
+From here you can also look at operations with the camera, such as projecting a ray from the camera at a given pixel. Also projecting a latitude, longitude, elevation point into the camera to get the pixel location::
 
-    # Fill in
+    image_pt = nadir_cam.project_to_camera(lon, lat, elevation)
+    ray = nadir_cam.project_from_camera(co, row)
+
+Rays can be used with ground elevation to find the intersection of the pixel and the ground::
+
+    ground_point_at_pxiel = ray.intersect_at_elevation(nadir_cam.elevation)
+
+We have provided a simple single-image height measurement function that uses the camera and two points to compute the height of an object at a given elevation::
+
+    height = nadir_cam.height_between_points(base_img_pt, peak_image_pt, nadir_cam.elevation)
 
 Lastly, we have proivded a function to take multiple cameras and associated image points, and triangulate a three dimensional point::
 
