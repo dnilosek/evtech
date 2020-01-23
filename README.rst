@@ -25,14 +25,7 @@ EVTech
 
 Simple tools for working with data provided by Eagleview for the RIT Hack.tiff 2020 Hackathon
 
-
 * Free software: MIT license
 * Documentation: https://evtech.readthedocs.io.
-
-====
-TODO
-====
-
-* Create example
 
 .. include:: ./HISTORY.rst
