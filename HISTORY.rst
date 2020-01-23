@@ -2,6 +2,10 @@
 History
 =======
 
+1.0.1 (2020-01-22)
+------------------
+* Documentation build fixes
+
 1.0.0 (2020-01-22)
 ------------------
 * Added ability to get shapely geometry of image bounds on ground
