@@ -27,5 +27,3 @@ Simple tools for working with data provided by Eagleview for the RIT Hack.tiff 2
 
 * Free software: MIT license
 * Documentation: https://evtech.readthedocs.io.
-
-.. include:: ./HISTORY.rst
