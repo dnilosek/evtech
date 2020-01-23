@@ -2,6 +2,11 @@
 History
 =======
 
+1.0.0 (2020-01-22)
+------------------
+* Added ability to get shapely geometry of image bounds on ground
+* Included example application for measuring height from an image
+
 0.7.0 (2020-01-20)
 ------------------
 * Added triangulation function
