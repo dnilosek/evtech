@@ -13,6 +13,7 @@ Welcome to EVTech's documentation!
    contributing
    authors
    history
+   demo
 
 Indices and tables
 ==================
