@@ -9,16 +9,15 @@ This app uses the following dependecies:
 * EVTech
 * OpenCV
 
-====
+
 Demo
-====
+----
 
 .. figure:: ../docs/demo.gif
    :scale: 100 %
    :alt: Demo of height measurments
 
-======
 Source
-======
+------
 
 .. literalinclude:: ../example/main.py
