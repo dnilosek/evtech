@@ -8,8 +8,9 @@ def load_dataset(dir_path, loader = camera_from_json):
     
     :param dir_path: Path to the dataset
     :type dir_path: string
-    :param loader: Callable function to load a single image/metadata pair
-    :param loader: function(str, str), optional
+    :param loader: function(str, str), optional, defaults to camera_from_json
+    :type loader: function
+
     :return: A tuple with list of nadir cams and list of oblique cams
     :rtype: tuple: list,list
     """
