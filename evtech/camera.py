@@ -50,8 +50,17 @@ class Camera():
         """
         self.image_path = image_path
 
+    def get_elevation(self):
+        """ Get the average ground elevation of the image
+
+        :return: The average elevation of the ground in the frame
+        :rtype: float
+        """
+        return self.elevation
+        
     def get_bounds(self):
         """ Get the bounds of the camera
+
         :return: The bounds of the image on the ground
         :rtype: class: `shapely.Polygon`
         """

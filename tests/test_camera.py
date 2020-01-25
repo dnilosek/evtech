@@ -33,6 +33,10 @@ class TestCamera(unittest.TestCase):
         self.cam = Camera(self.proj, self.bounds, self.cen, self.geo_bounds, self.elev, self.crs, self.path)
         pass
     
+    def test_elevation(self):
+        elev = self.cam.get_elevation()
+        self.assertEqual(elev, self.elev)
+        
     def test_bounds(self):
         bounds = self.cam.get_bounds()
         self.assertAlmostEqual(bounds.exterior.coords.xy[0][0],self.geo_bounds[2])
