@@ -2,6 +2,11 @@
 History
 =======
 
+1.1.0 (2020-01-24)
+------------------
+* Documentation fixes
+* Added access to camera elevation
+
 1.0.1 (2020-01-22)
 ------------------
 * Documentation build fixes
