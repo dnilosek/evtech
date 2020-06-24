@@ -6,7 +6,7 @@ flake8==3.7.9
 tox==3.14.3
 coverage==5.0.3
 Sphinx==2.3.1
-twine==3.1.1
+twine==3.2.0
 sphinx_rtd_theme==0.4.3
 opencv-contrib-python==4.1.2.30
 pyproj==2.4.2.post1
